@@ -1,0 +1,6 @@
+TeamUp Project
+==============
+
+File ini dibuat sebagai file .txt untuk project TeamUp.
+
+Dibuat pada: 2026-04-25
