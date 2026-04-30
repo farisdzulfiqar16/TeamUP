@@ -99,15 +99,6 @@ function App() {
         }
       />
 
-    <Route
-      path="/create-team"
-      element={
-        <MainLayout>
-          <CreateTeam />
-        </MainLayout>
-      }
-    />
-
     </Routes>
   );
 }

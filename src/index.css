@@ -1,2 +1,16 @@
 /* @config "../tailwind.config.js"; */
 @import "tailwindcss";
+
+/* optional smooth transition */
+* {
+    transition: background-color 0.2s ease, color 0.2s ease;
+  }
+
+/* Hide scrollbar while keeping functionality */
+.scrollbar-hide::-webkit-scrollbar {
+  display: none;
+}
+.scrollbar-hide {
+  -ms-overflow-style: none;
+  scrollbar-width: none;
+}

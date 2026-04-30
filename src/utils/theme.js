@@ -1,13 +1,13 @@
 export function setTheme(mode) {
-    if (mode === "dark") {
-      document.documentElement.classList.add("dark");
-      localStorage.setItem("theme", "dark");
-    } else {
-      document.documentElement.classList.remove("dark");
-      localStorage.setItem("theme", "light");
-    }
+  const isDark = mode === "dark";
+  if (isDark) {
+    document.documentElement.classList.add("dark");
+  } else {
+    document.documentElement.classList.remove("dark");
   }
-  
-  export function getTheme() {
-    return localStorage.getItem("theme") === "dark";
-  }
+  localStorage.setItem("theme", mode);
+}
+
+export function getTheme() {
+  return localStorage.getItem("theme") || "light";
+}

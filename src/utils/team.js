@@ -2,11 +2,11 @@ const TEAMS_KEY = "teams";
 const TEAMS_UPDATED_EVENT = "teams:updated";
 
 export function getStoredTeams() {
-  return JSON.parse(localStorage.getItem(TEAMS_KEY) || "[]");
+  return JSON.parse(sessionStorage.getItem(TEAMS_KEY) || "[]");
 }
 
 export function saveStoredTeams(teams) {
-  localStorage.setItem(TEAMS_KEY, JSON.stringify(teams));
+  sessionStorage.setItem(TEAMS_KEY, JSON.stringify(teams));
   window.dispatchEvent(new Event(TEAMS_UPDATED_EVENT));
 }
 
@@ -15,10 +15,24 @@ export function addStoredTeam(team) {
   saveStoredTeams([...currentTeams, team]);
 }
 
+export function removeStoredTeam(teamId) {
+  const currentTeams = getStoredTeams();
+  const updatedTeams = currentTeams.filter(t => t.id !== teamId);
+  saveStoredTeams(updatedTeams);
+}
+
+export function isTeamJoined(teamId) {
+  const teams = getStoredTeams();
+  return teams.some(t => t.originalId === teamId);
+}
+
 export function subscribeTeamsChange(callback) {
   const handleCustomUpdate = () => callback(getStoredTeams());
+
   const handleStorageUpdate = (event) => {
-    if (event.key === TEAMS_KEY) callback(getStoredTeams());
+    if (event.key === TEAMS_KEY) {
+      callback(getStoredTeams());
+    }
   };
 
   window.addEventListener(TEAMS_UPDATED_EVENT, handleCustomUpdate);
@@ -28,9 +42,4 @@ export function subscribeTeamsChange(callback) {
     window.removeEventListener(TEAMS_UPDATED_EVENT, handleCustomUpdate);
     window.removeEventListener("storage", handleStorageUpdate);
   };
-}
-
-export function isTeamJoined(teamId) {
-  const teams = getStoredTeams();
-  return teams.some((t) => t.originalId === teamId);
 }

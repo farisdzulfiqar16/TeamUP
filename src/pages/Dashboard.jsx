@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import Header from "../components/Header";
 import StatsCard from "../components/StatsCard";
 import TeamCard from "../components/TeamCard";
@@ -11,31 +11,57 @@ import { dummyTeams } from "../data/dummyTeams";
 export default function Dashboard() {
   const navigate = useNavigate();
   const [loading, setLoading] = useState(true);
-  const [teams, setTeams] = useState([]);
-  
+  const [teams, setTeams] = useState(getStoredTeams());
+
+  const scrollRef = useRef(null);
+
+  // 👉 drag scroll (desktop support)
+  const handleMouseDown = (e) => {
+    const el = scrollRef.current;
+    el.isDown = true;
+    el.startX = e.pageX - el.offsetLeft;
+    el.scrollLeftStart = el.scrollLeft;
+  };
+
+  const handleMouseLeave = () => {
+    scrollRef.current.isDown = false;
+  };
+
+  const handleMouseUp = () => {
+    scrollRef.current.isDown = false;
+  };
+
+  const handleMouseMove = (e) => {
+    const el = scrollRef.current;
+    if (!el.isDown) return;
+    e.preventDefault();
+    const x = e.pageX - el.offsetLeft;
+    const walk = (x - el.startX) * 1.5;
+    el.scrollLeft = el.scrollLeftStart - walk;
+  };
+
   useEffect(() => {
-    setTeams(getStoredTeams());
-    const unsubscribeTeams = subscribeTeamsChange(setTeams);
+    const unsubscribe = subscribeTeamsChange(setTeams);
 
     const timer = setTimeout(() => setLoading(false), 1000);
     return () => {
       clearTimeout(timer);
-      unsubscribeTeams();
+      unsubscribe();
     };
   }, []);
 
   return (
-    <div>
+    <div className="min-h-screen bg-gray-100 dark:bg-gray-900 transition-colors duration-300 p-4">
 
       <Header />
 
-      {/* Stats */}
+      {/* ================= STATS ================= */}
       <div className="mb-6 grid grid-cols-1 gap-4 md:grid-cols-3">
         {loading ? (
-          [1, 2, 3].map((item) => (
+          [1, 2, 3].map((i) => (
             <div
-              key={item}
-              className="rounded-xl border border-gray-200 bg-white p-4 shadow-sm dark:border-gray-700 dark:bg-gray-800"
+              key={i}
+              className="rounded-xl border bg-white p-4 dark:bg-gray-800"
             >
               <SkeletonText className="mb-2 h-6 w-16" />
               <SkeletonText className="mb-2 h-4 w-24" />
@@ -44,76 +70,78 @@ export default function Dashboard() {
           ))
         ) : (
           <>
-            <StatsCard
-              title="Tim Aktif"
-              value={teams.length}
-              subtitle="Bergabung dalam tim"
-            />
-            <StatsCard
-              title="Lamaran"
-              value="3"
-              subtitle="Menunggu respon"
-            />
-            <StatsCard
-              title="Undangan"
-              value="5"
-              subtitle="Belum dibaca"
-            />
+            <StatsCard title="Tim Aktif" value={teams.length} subtitle="Bergabung dalam tim" />
+            <StatsCard title="Lamaran" value="3" subtitle="Menunggu respon" />
+            <StatsCard title="Undangan" value="5" subtitle="Belum dibaca" />
           </>
         )}
       </div>
 
-      {/* Tim Aktif */}
+      {/* ================= TIM AKTIF ================= */}
       <div className="mb-6">
-        <h2 className="mb-3 font-semibold text-gray-800 dark:text-gray-100">
+        <h2 className="mb-2 font-semibold text-gray-800 dark:text-gray-100">
           Tim Aktif Saya
         </h2>
 
-        <div className="flex gap-4 flex-wrap">
-          {loading ? (
-            [1, 2, 3].map((item) => (
-              <div
-                key={item}
-                className="w-[280px] rounded-xl border border-gray-200 bg-white p-5 shadow-sm dark:border-gray-700 dark:bg-gray-800"
-              >
-                <SkeletonText className="mb-3 h-5 w-36" />
-                <SkeletonText className="mb-3 h-6 w-20 rounded-full" />
-                <SkeletonText className="h-4 w-24" />
-              </div>
-            ))
-          ) : teams.length > 0 ? (
-            teams.map((team) => (
-              <TeamCard
-                key={team.id}
-                {...team}
-                onClick={() => navigate(`/team/${team.id}`)}
-              />
-            ))
-          ) : (
-            <p className="text-sm text-gray-500 dark:text-gray-400">
-              Kamu belum punya tim. Yuk cari atau buat tim baru 🚀
-            </p>
-          )}
-        </div>
-      </div>
+        {teams.length === 0 && !loading && (
+          <p className="text-sm text-gray-500 dark:text-gray-400 mb-2">
+            Kamu belum punya tim
+          </p>
+        )}
 
-      {/* Rekomendasi */}
-      <div>
-        <h2 className="mb-3 font-semibold text-gray-800 dark:text-gray-100">
-          Rekomendasi Tim
-        </h2>
-
-        <div className="flex gap-4 flex-wrap">
+        <div
+          className="flex gap-4 overflow-x-auto pb-3 cursor-grab active:cursor-grabbing scrollbar-hide"
+        >
           {loading
-            ? [1, 2, 3].map((item) => (
-                <SkeletonCard key={item} className="h-[136px] w-[280px]" />
+            ? [1, 2, 3].map((i) => (
+                <SkeletonCard key={i} className="h-[136px] w-[280px]" />
               ))
-            : dummyTeams.map((team) => (
-                <TeamCard key={team.id} {...team} />
+            : teams.map((team) => (
+                <TeamCard
+                  key={team.id}
+                  {...team}
+                  onClick={() => navigate(`/team/${team.id}`)}
+                />
               ))}
         </div>
       </div>
 
+      {/* ================= REKOMENDASI ================= */}
+      <div>
+        <h2 className="mb-2 font-semibold text-gray-800 dark:text-gray-100">
+          Rekomendasi Tim
+        </h2>
+
+        <p className="text-xs text-gray-400 mb-2">
+          Geser untuk melihat →
+        </p>
+
+        <div
+          ref={scrollRef}
+          onMouseDown={handleMouseDown}
+          onMouseLeave={handleMouseLeave}
+          onMouseUp={handleMouseUp}
+          onMouseMove={handleMouseMove}
+          className="overflow-x-auto pb-4 cursor-grab active:cursor-grabbing scrollbar-hide"
+        >
+          <div
+            className="grid gap-4"
+            style={{
+              gridAutoFlow: "column",
+              gridTemplateRows: "repeat(2, 1fr)",
+              gridAutoColumns: "280px",
+            }}
+          >
+            {loading
+              ? [1, 2, 3, 4].map((i) => (
+                  <SkeletonCard key={i} className="h-[136px]" />
+                ))
+              : dummyTeams.map((team) => (
+                  <TeamCard key={team.id} {...team} />
+                ))}
+          </div>
+        </div>
+      </div>
     </div>
   );
 }

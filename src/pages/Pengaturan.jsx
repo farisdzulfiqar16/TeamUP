@@ -1,29 +1,26 @@
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import PageLayout from "../components/PageLayout";
 import { setTheme, getTheme } from "../utils/theme";
-import SkeletonCard from "../components/SkeletonCard";
 
 function Pengaturan() {
-  const [darkMode, setDarkMode] = useState(false);
-
-  useEffect(() => {
-    setDarkMode(getTheme());
-  }, []);
+  const [isDark, setIsDark] = useState(getTheme() === "dark");
 
   const handleToggle = () => {
-    const newValue = !darkMode;
-    setDarkMode(newValue);
-    setTheme(newValue ? "dark" : "light");
+    const newMode = isDark ? "light" : "dark";
+    setTheme(newMode);
+    setIsDark(!isDark);
   };
 
   return (
     <PageLayout title="Pengaturan">
-      <div className="flex justify-between">
-        <span>Mode Gelap</span>
+      <div className="flex items-center justify-between">
+        <span className="text-gray-800 dark:text-gray-100">Mode Gelap</span>
+
         <input
           type="checkbox"
-          checked={darkMode}
+          checked={isDark}
           onChange={handleToggle}
+          className="h-5 w-5 cursor-pointer"
         />
       </div>
     </PageLayout>
