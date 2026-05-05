@@ -4,7 +4,7 @@ function TeamCard({ teamName, category, description, roles = [], level, duration
   return (
     <div
       onClick={onClick}
-      className="w-70 cursor-pointer rounded-xl border border-gray-200 bg-white p-4 shadow-sm dark:border-gray-700 dark:bg-gray-800"
+      className="w-70 cursor-pointer rounded-xl border border-gray-200 bg-white p-4 shadow-sm dark:border-gray-700 flex h-full flex-col"
     >
       <h3 className="font-semibold text-gray-800 dark:text-gray-100">
         {teamName}
@@ -20,7 +20,7 @@ function TeamCard({ teamName, category, description, roles = [], level, duration
         {roles.map((role) => (
           <span
             key={role}
-            className="rounded-full bg-slate-100 px-2 py-1 text-slate-700 dark:bg-slate-900 dark:text-slate-200"
+            className="rounded-full bg-slate-100 px-2 py-1 text-slate-800 dark:text-slate-200"
           >
             {role}
           </span>
@@ -28,16 +28,16 @@ function TeamCard({ teamName, category, description, roles = [], level, duration
       </div>
 
       <div className="mt-3 flex gap-2 text-xs">
-        <span className="rounded bg-blue-100 px-2 py-1 text-blue-800 dark:bg-blue-900 dark:text-blue-200">
+        <span className="rounded px-2 py-1 text-blue-800 bg-blue-300 dark:text-blue-200">
           {level}
         </span>
-        <span className="rounded bg-green-100 px-2 py-1 text-green-800 dark:bg-green-900 dark:text-green-200">
+        <span className="rounded px-2 py-1 text-green-800 bg-green-500 dark:text-green-200">
           {duration}
         </span>
       </div>
 
       {/* ACTION BUTTON */}
-      {action && <div className="mt-3">{action}</div>}
+      {action && <div className="mt-auto flex justify-end">{action}</div>}
     </div>
   );
 }

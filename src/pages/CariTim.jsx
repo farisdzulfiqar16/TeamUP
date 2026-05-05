@@ -11,12 +11,15 @@ function CariTim() {
 
   const [showFilter, setShowFilter] = useState(false);
   const [showMorePopup, setShowMorePopup] = useState(false);
+  const [toast, setToast] = useState(null);
+
   const [filters, setFilters] = useState({
     category: [],
     level: [],
     duration: [],
   });
 
+  // LOAD DATA
   useEffect(() => {
     const timer = setTimeout(() => {
       setTeams(dummyTeams);
@@ -26,9 +29,15 @@ function CariTim() {
     return () => clearTimeout(timer);
   }, []);
 
+  const showToast = (message) => {
+    setToast(message);
+    setTimeout(() => setToast(null), 2400);
+  };
+
+  // JOIN TEAM
   const handleJoin = (team) => {
     if (isTeamJoined(team.id)) {
-      alert("Kamu sudah join tim ini");
+      showToast("Kamu sudah join tim ini");
       return;
     }
 
@@ -39,27 +48,21 @@ function CariTim() {
     };
 
     addStoredTeam(newTeam);
-    alert("Berhasil join tim 🚀");
+    setTeams((prev) => [...prev]);
+    showToast("Berhasil join tim 🚀");
   };
 
-  // 🔥 FILTER LOGIC
+  // FILTER LOGIC
   const filteredTeams = teams.filter((team) => {
-    if (
-      filters.category.length > 0 &&
-      !filters.category.includes(team.category)
-    )
+    if (filters.category.length && !filters.category.includes(team.category))
       return false;
-    if (filters.level.length > 0 && !filters.level.includes(team.level))
+    if (filters.level.length && !filters.level.includes(team.level))
       return false;
-    if (
-      filters.duration.length > 0 &&
-      !filters.duration.includes(team.duration)
-    )
+    if (filters.duration.length && !filters.duration.includes(team.duration))
       return false;
     return true;
   });
 
-  // 🔥 DATA FILTER
   const categories = [...new Set(teams.map((t) => t.category))];
   const levels = [...new Set(teams.map((t) => t.level))];
   const durations = [...new Set(teams.map((t) => t.duration))];
@@ -88,6 +91,7 @@ function CariTim() {
 
   return (
     <PageLayout title="Cari Tim">
+
       {/* SEARCH + FILTER BUTTON */}
       <div className="flex justify-between items-center mb-4">
         <input
@@ -95,6 +99,7 @@ function CariTim() {
           placeholder="Cari tim..."
           className="flex-1 rounded-lg border px-3 py-2 text-sm"
         />
+
         <button
           onClick={() => setShowFilter(!showFilter)}
           className="ml-4 px-4 py-2 bg-blue-600 text-white rounded-lg"
@@ -103,31 +108,28 @@ function CariTim() {
         </button>
       </div>
 
-      {/* 🔥 FILTER DROPDOWN */}
+      {/* 🔥 FILTER DROPDOWN (PUTIH SOLID) */}
       {showFilter && (
         <div className="relative mb-4">
-          <div
-            className={`absolute right-0 z-10 mt-2 w-72 rounded-lg p-4 shadow-lg border bg-white/95 text-gray-800 border-gray-200 dark:bg-gray-800/95 dark:text-gray-100 dark:border-gray-700 backdrop-blur-sm transition-all duration-200 ease-out ${showFilter ? "opacity-100 translate-y-0" : "opacity-0 -translate-y-2"}`}
-          >
+          <div className="absolute right-0 z-10 mt-2 w-72 rounded-xl p-4 shadow-lg bg-white border border-gray-200  dark:border-gray-700">
+
             {/* CATEGORY */}
             <div className="mb-3">
-              <h4 className="font-semibold mb-2 text-gray-800 dark:text-gray-100">
-                Kategori
-              </h4>
+              <h4 className="font-semibold mb-2">Kategori</h4>
               {categories.slice(0, 3).map((cat) => (
-                <label key={cat} className="block text-sm text-gray-700 dark:text-gray-200">
+                <label key={cat} className="block text-sm">
                   <input
                     type="checkbox"
+                    className="mr-2"
                     checked={filters.category.includes(cat)}
                     onChange={() => handleFilterChange("category", cat)}
-                    className="mr-2"
                   />
                   {cat}
                 </label>
               ))}
+
               {categories.length > 3 && (
                 <button
-                  type="button"
                   onClick={() => setShowMorePopup(true)}
                   className="mt-2 text-sm text-blue-600 hover:underline"
                 >
@@ -138,16 +140,14 @@ function CariTim() {
 
             {/* LEVEL */}
             <div className="mb-3">
-              <h4 className="font-semibold mb-2 text-gray-800 dark:text-gray-100">
-                Level
-              </h4>
+              <h4 className="font-semibold mb-2">Level</h4>
               {levels.map((lvl) => (
-                <label key={lvl} className="block text-sm text-gray-700 dark:text-gray-200">
+                <label key={lvl} className="block text-sm">
                   <input
                     type="checkbox"
+                    className="mr-2"
                     checked={filters.level.includes(lvl)}
                     onChange={() => handleFilterChange("level", lvl)}
-                    className="mr-2"
                   />
                   {lvl}
                 </label>
@@ -156,110 +156,122 @@ function CariTim() {
 
             {/* DURATION */}
             <div>
-              <h4 className="font-semibold mb-2 text-gray-800 dark:text-gray-100">
-                Durasi
-              </h4>
+              <h4 className="font-semibold mb-2">Durasi</h4>
               {durations.map((dur) => (
-                <label key={dur} className="block text-sm text-gray-700 dark:text-gray-200">
+                <label key={dur} className="block text-sm">
                   <input
                     type="checkbox"
+                    className="mr-2"
                     checked={filters.duration.includes(dur)}
                     onChange={() => handleFilterChange("duration", dur)}
-                    className="mr-2"
                   />
                   {dur}
                 </label>
               ))}
             </div>
+
           </div>
         </div>
       )}
 
-      {/* 🔥 POPUP FILTER LENGKAP */}
+      {/* 🔥 POPUP FILTER LENGKAP (BLUR BACKGROUND + WHITE MODAL) */}
       {showMorePopup && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/40 px-4 py-8">
-          <div className="w-full max-w-2xl rounded-2xl bg-white p-6 shadow-2xl dark:bg-gray-900">
-            <div className="flex items-center justify-between mb-4">
+        <div className="fixed inset-0 z-50 flex items-center justify-center px-4 py-8 bg-black/40 backdrop-blur-sm">
+
+          <div className="w-full max-w-2xl rounded-2xl shadow-2xl bg-white ">
+
+            {/* HEADER */}
+            <div className="flex justify-between items-center p-6 pb-0">
               <div>
-                <h3 className="text-lg font-semibold text-gray-900 dark:text-gray-100">Filter Lengkap</h3>
-                <p className="text-sm text-gray-500 dark:text-gray-400">Pilih kategori, level, dan durasi yang tersedia.</p>
+                <h3 className="text-lg font-semibold">Filter Lengkap</h3>
+                <p className="text-sm text-gray-500">
+                  Pilih kategori, level, dan durasi.
+                </p>
               </div>
+
               <button
-                type="button"
                 onClick={() => setShowMorePopup(false)}
-                className="text-gray-500 hover:text-gray-900 dark:text-gray-300 dark:hover:text-white"
+                className="text-lg"
               >
-                ×
+                ✕
               </button>
             </div>
 
-            <div className="grid gap-6 md:grid-cols-3">
+            {/* GRID */}
+            <div className="grid md:grid-cols-3 gap-6 px-6 mt-4">
+
+              {/* CATEGORY */}
               <div>
-                <h4 className="font-semibold mb-2 text-gray-800 dark:text-gray-100">Kategori</h4>
-                <div className="max-h-40 overflow-y-auto pr-2">
-                  {categories.map((cat) => (
-                    <label key={cat} className="mb-2 flex items-center text-sm text-gray-700 dark:text-gray-200">
-                      <input
-                        type="checkbox"
-                        checked={filters.category.includes(cat)}
-                        onChange={() => handleFilterChange("category", cat)}
-                        className="mr-2"
-                      />
-                      {cat}
-                    </label>
-                  ))}
-                </div>
+                <h4 className="font-semibold mb-2">Kategori</h4>
+                {categories.map((cat) => (
+                  <label key={cat} className="block text-sm mb-1">
+                    <input
+                      type="checkbox"
+                      className="mr-2"
+                      checked={filters.category.includes(cat)}
+                      onChange={() => handleFilterChange("category", cat)}
+                    />
+                    {cat}
+                  </label>
+                ))}
               </div>
 
+              {/* LEVEL */}
               <div>
-                <h4 className="font-semibold mb-2 text-gray-800 dark:text-gray-100">Level</h4>
-                <div className="max-h-40 overflow-y-auto pr-2">
-                  {levels.map((lvl) => (
-                    <label key={lvl} className="mb-2 flex items-center text-sm text-gray-700 dark:text-gray-200">
-                      <input
-                        type="checkbox"
-                        checked={filters.level.includes(lvl)}
-                        onChange={() => handleFilterChange("level", lvl)}
-                        className="mr-2"
-                      />
-                      {lvl}
-                    </label>
-                  ))}
-                </div>
+                <h4 className="font-semibold mb-2">Level</h4>
+                {levels.map((lvl) => (
+                  <label key={lvl} className="block text-sm mb-1">
+                    <input
+                      type="checkbox"
+                      className="mr-2"
+                      checked={filters.level.includes(lvl)}
+                      onChange={() => handleFilterChange("level", lvl)}
+                    />
+                    {lvl}
+                  </label>
+                ))}
               </div>
 
+              {/* DURATION */}
               <div>
-                <h4 className="font-semibold mb-2 text-gray-800 dark:text-gray-100">Durasi</h4>
-                <div className="max-h-40 overflow-y-auto pr-2">
-                  {durations.map((dur) => (
-                    <label key={dur} className="mb-2 flex items-center text-sm text-gray-700 dark:text-gray-200">
-                      <input
-                        type="checkbox"
-                        checked={filters.duration.includes(dur)}
-                        onChange={() => handleFilterChange("duration", dur)}
-                        className="mr-2"
-                      />
-                      {dur}
-                    </label>
-                  ))}
-                </div>
+                <h4 className="font-semibold mb-2">Durasi</h4>
+                {durations.map((dur) => (
+                  <label key={dur} className="block text-sm mb-1">
+                    <input
+                      type="checkbox"
+                      className="mr-2"
+                      checked={filters.duration.includes(dur)}
+                      onChange={() => handleFilterChange("duration", dur)}
+                    />
+                    {dur}
+                  </label>
+                ))}
               </div>
+
             </div>
 
-            <div className="mt-6 flex justify-end gap-3">
+            {/* FOOTER */}
+            <div className="flex justify-end p-6">
               <button
-                type="button"
                 onClick={() => setShowMorePopup(false)}
-                className="rounded-lg border border-gray-200 px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 dark:border-gray-700 dark:text-gray-200 dark:hover:bg-gray-800"
+                className="px-4 py-2 border rounded-lg hover:bg-gray-100"
               >
                 Tutup
               </button>
             </div>
+
           </div>
         </div>
       )}
 
-      {/* 🔥 ACTIVE FILTER TAG */}
+      {/* POPUP TOAST */}
+      {toast && (
+        <div className="fixed bottom-6 right-6 z-50 rounded-2xl bg-slate-900 px-4 py-3 text-sm text-white shadow-xl">
+          {toast}
+        </div>
+      )}
+
+      {/* ACTIVE FILTER TAG */}
       {activeFilters.length > 0 && (
         <div className="mb-4 flex gap-2 flex-wrap">
           {activeFilters.map(({ type, value }) => (
@@ -282,7 +294,9 @@ function CariTim() {
       {/* LIST */}
       <div className="flex flex-wrap gap-4">
         {loading
-          ? [1, 2, 3].map((i) => <SkeletonCard key={i} className="h-34 w-70" />)
+          ? [1, 2, 3].map((i) => (
+              <SkeletonCard key={i} className="h-34 w-70" />
+            ))
           : filteredTeams.map((team) => {
               const joined = isTeamJoined(team.id);
 
@@ -308,6 +322,7 @@ function CariTim() {
               );
             })}
       </div>
+
     </PageLayout>
   );
 }

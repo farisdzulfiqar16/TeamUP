@@ -16,15 +16,15 @@ function Sidebar() {
   ];
 
   return (
-    <div className="flex h-full w-60 flex-col border-r border-gray-200 bg-white p-5 text-gray-800 transition-colors dark:border-gray-700 dark:bg-gray-800 dark:text-gray-100">
+    <div className="flex h-full w-60 flex-col border-r border-gray-200 bg-white p-5 text-black">
       
       {/* Logo / Title */}
-      <div className="mb-6 text-lg font-bold">
+      <div className="mb-6 text-lg font-bold text-black">
         🚀 TeamUp
       </div>
 
       {/* Menu */}
-      <ul className="flex flex-col gap-2 text-sm">
+      <ul className="flex flex-col gap-2 text-sm text-black">
         {menu.map((item) => {
           const isActive = location.pathname === item.path;
 
@@ -34,8 +34,8 @@ function Sidebar() {
               onClick={() => navigate(item.path)}
               className={`cursor-pointer rounded p-2 transition-colors ${
                 isActive
-                  ? "bg-gray-200 dark:bg-gray-700"
-                  : "hover:bg-gray-100 dark:hover:bg-gray-700"
+                  ? "bg-gray-100 text-black"
+                  : "hover:bg-slate-100 text-black"
               }`}
             >
               {item.name}
@@ -47,7 +47,7 @@ function Sidebar() {
       {/* Tombol di bawah */}
       <button
         onClick={() => navigate("/create-team")}
-        className="mt-auto rounded bg-blue-600 p-2 text-sm text-white transition-colors hover:bg-blue-500 dark:bg-gray-700 dark:text-gray-100 dark:hover:bg-gray-600"
+        className="mt-auto rounded bg-blue-600 p-2 text-sm text-black transition-colors hover:bg-blue-500 hover:bg-blue-300"
       >
         + Buat Tim
       </button>

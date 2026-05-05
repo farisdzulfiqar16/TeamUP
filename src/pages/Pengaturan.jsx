@@ -1,24 +1,21 @@
 import { useState } from "react";
 import PageLayout from "../components/PageLayout";
-import { setTheme, getTheme } from "../utils/theme";
 
 function Pengaturan() {
-  const [isDark, setIsDark] = useState(getTheme() === "dark");
+  const [checked, setChecked] = useState(false);
 
   const handleToggle = () => {
-    const newMode = isDark ? "light" : "dark";
-    setTheme(newMode);
-    setIsDark(!isDark);
+    setChecked((prev) => !prev);
   };
 
   return (
     <PageLayout title="Pengaturan">
       <div className="flex items-center justify-between">
-        <span className="text-gray-800 dark:text-gray-100">Mode Gelap</span>
+        <span className="text-black">Mode Gelap</span>
 
         <input
           type="checkbox"
-          checked={isDark}
+          checked={checked}
           onChange={handleToggle}
           className="h-5 w-5 cursor-pointer"
         />

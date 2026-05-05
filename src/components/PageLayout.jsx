@@ -6,7 +6,7 @@ function PageLayout({ title, children, action }) {
 
       {/* Header */}
       <div className="flex items-center justify-between">
-        <h1 className="text-lg md:text-xl font-semibold text-gray-800 dark:text-gray-100">
+        <h1 className="text-lg md:text-xl font-semibold text-black">
           {title}
         </h1>
 
@@ -14,7 +14,7 @@ function PageLayout({ title, children, action }) {
       </div>
 
       {/* Content */}
-      <div className="rounded-xl border border-gray-200 bg-white p-4 shadow-sm dark:border-gray-700 dark:bg-gray-800 md:p-6">
+      <div className="rounded-xl border border-gray-200 bg-white p-4 shadow-sm md:p-6">
         {children}
       </div>
 

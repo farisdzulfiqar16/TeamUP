@@ -1,34 +1,32 @@
 function StepIndicator({ step }) {
-    const steps = [1, 2, 3];
-  
-    return (
-      <div className="mb-6 flex items-center justify-between">
-        {steps.map((s, index) => (
-          <div key={s} className="flex w-full items-center">
-  
-            {/* Circle */}
-            <div
-              className={`flex h-8 w-8 items-center justify-center rounded-full text-sm font-medium
-                ${step >= s ? "bg-blue-600 text-white" : "bg-gray-200 text-gray-500 dark:bg-gray-700 dark:text-gray-300"}
-              `}
-            >
-              {s}
-            </div>
-  
-            {/* Line */}
-            {index !== steps.length - 1 && (
-              <div
-                className={`mx-2 h-1 flex-1
-                  ${step > s ? "bg-blue-600" : "bg-gray-200 dark:bg-gray-700"}
-                `}
-              />
-            )}
-  
+  const steps = [
+    { id: 1, label: "Informasi Dasar" },
+    { id: 2, label: "Kebutuhan Anggota" },
+    { id: 3, label: "Detail Tambahan" },
+    { id: 4, label: "Selesai" },
+  ];
+
+  return (
+    <div className="mb-6 grid gap-4 sm:grid-cols-4">
+      {steps.map((item) => (
+        <div key={item.id} className="flex items-center gap-3 rounded-3xl bg-white px-4 py-4 shadow-sm">
+          <div
+            className={`flex h-9 w-9 items-center justify-center rounded-full text-sm font-semibold
+              ${step >= item.id ? "bg-blue-600 text-white" : "bg-gray-200 text-gray-600"}
+            `}
+          >
+            {item.id}
           </div>
-        ))}
-      </div>
-    );
-  }
-  
-  export default StepIndicator;
+          <div className="min-w-0">
+            <p className={`text-xs font-medium ${step >= item.id ? "text-blue-700" : "text-gray-500"}`}>
+              {item.label}
+            </p>
+          </div>
+        </div>
+      ))}
+    </div>
+  );
+}
+
+export default StepIndicator;
   

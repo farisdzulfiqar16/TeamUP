@@ -2,9 +2,14 @@ import { useEffect, useState } from "react";
 import PageLayout from "../components/PageLayout";
 import EmptyState from "../components/EmptyState";
 import TeamCard from "../components/TeamCard";
+import ClickSpark from "../components/ui/ClickSpark";
 import { useNavigate } from "react-router-dom";
 import SkeletonCard from "../components/SkeletonCard";
-import { getStoredTeams, subscribeTeamsChange, removeStoredTeam } from "../utils/team";
+import {
+  getStoredTeams,
+  subscribeTeamsChange,
+  removeStoredTeam,
+} from "../utils/team";
 
 function TimSaya() {
   const navigate = useNavigate();
@@ -34,13 +39,13 @@ function TimSaya() {
       removeStoredTeam(teamToLeave.id);
 
       // Update global teams isJoined
-      const storedAllTeams = sessionStorage.getItem('allTeams');
+      const storedAllTeams = sessionStorage.getItem("allTeams");
       if (storedAllTeams) {
         const allTeams = JSON.parse(storedAllTeams);
-        const updatedAllTeams = allTeams.map(t => 
-          t.id === teamToLeave.originalId ? { ...t, isJoined: false } : t
+        const updatedAllTeams = allTeams.map((t) =>
+          t.id === teamToLeave.originalId ? { ...t, isJoined: false } : t,
         );
-        sessionStorage.setItem('allTeams', JSON.stringify(updatedAllTeams));
+        sessionStorage.setItem("allTeams", JSON.stringify(updatedAllTeams));
       }
     }
     setShowConfirmModal(false);
@@ -57,18 +62,21 @@ function TimSaya() {
       <PageLayout
         title="Tim Saya"
         action={
-          <button
-            onClick={() => navigate("/create-team")}
-            className="rounded bg-blue-600 px-3 py-1 text-sm text-white transition-colors hover:bg-blue-500 dark:bg-gray-700 dark:hover:bg-gray-600"
-          >
-            + Buat Tim
-          </button>
+          <ClickSpark sparkColor="#3b82f6" sparkSize={10} sparkRadius={14} sparkCount={6} duration={400}>
+            <button
+              onClick={() => navigate("/create-team")}
+              className="rounded bg-blue-600 px-3 py-1 text-sm text-white transition-colors hover:bg-blue-500"
+              type="button"
+            >
+              + Buat Tim
+            </button>
+          </ClickSpark>
         }
       >
         {loading ? (
           <div className="flex flex-wrap gap-4">
             {[1, 2, 3].map((item) => (
-              <SkeletonCard key={item} className="h-[136px] w-[280px]" />
+              <SkeletonCard key={item} className="h-34 w-70" />
             ))}
           </div>
         ) : teams.length > 0 ? (
@@ -102,14 +110,16 @@ function TimSaya() {
 
       {/* Confirm Modal */}
       {showConfirmModal && (
-        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
-          <div className="bg-white dark:bg-gray-800 rounded-lg p-6 max-w-sm mx-4">
+        <div className="fixed inset-0 bg-black/40 backdrop-blur-sm flex items-center justify-center z-50">
+          <div className="bg-white rounded-lg p-6 max-w-sm mx-4 shadow-lg">
             <h3 className="text-lg font-semibold mb-4 text-gray-800 dark:text-gray-100">
               Keluar dari Tim
             </h3>
+
             <p className="text-gray-600 dark:text-gray-300 mb-6">
               Yakin ingin keluar dari tim "{teamToLeave?.teamName}"?
             </p>
+
             <div className="flex gap-3 justify-end">
               <button
                 onClick={cancelLeave}
@@ -117,6 +127,7 @@ function TimSaya() {
               >
                 Batal
               </button>
+
               <button
                 onClick={confirmLeave}
                 className="px-4 py-2 bg-red-600 text-white hover:bg-red-700 rounded"

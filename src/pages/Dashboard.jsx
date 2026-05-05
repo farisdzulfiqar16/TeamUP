@@ -51,7 +51,7 @@ export default function Dashboard() {
   }, []);
 
   return (
-    <div className="min-h-screen bg-gray-100 dark:bg-gray-900 transition-colors duration-300 p-4">
+    <div className="min-h-screen bg-white transition-colors duration-300 p-4">
 
       <Header />
 
@@ -61,7 +61,7 @@ export default function Dashboard() {
           [1, 2, 3].map((i) => (
             <div
               key={i}
-              className="rounded-xl border bg-white p-4 dark:bg-gray-800"
+              className="rounded-xl border bg-white p-4 "
             >
               <SkeletonText className="mb-2 h-6 w-16" />
               <SkeletonText className="mb-2 h-4 w-24" />

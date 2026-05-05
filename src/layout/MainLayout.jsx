@@ -3,7 +3,7 @@ import Sidebar from "../components/Sidebar";
 
 function MainLayout({ children }) {
   return (
-    <div className="flex h-screen w-full bg-gray-100 text-gray-800 dark:bg-gray-900 dark:text-gray-100 transition-colors duration-300">
+    <div className="flex h-screen w-full bg-white text-black transition-colors duration-300">
 
       {/* Sidebar */}
       <Sidebar />

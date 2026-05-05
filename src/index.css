@@ -4,7 +4,16 @@
 /* optional smooth transition */
 * {
     transition: background-color 0.2s ease, color 0.2s ease;
-  }
+}
+
+body {
+  background-color: var(--page-background, #EEEDED);
+  color: var(--text-color, #000000);
+}
+
+* {
+  color: inherit;
+}
 
 /* Hide scrollbar while keeping functionality */
 .scrollbar-hide::-webkit-scrollbar {

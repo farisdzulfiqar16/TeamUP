@@ -3,10 +3,9 @@ import ReactDOM from "react-dom/client";
 import { BrowserRouter } from "react-router-dom";
 import App from "./App";
 import "./index.css";
-import { setTheme, getTheme } from "./utils/theme";
+import { setTheme } from "./utils/theme";
 
-// Apply saved theme saat app load
-setTheme(getTheme());
+setTheme();
 
 ReactDOM.createRoot(document.getElementById("root")).render(
   <React.StrictMode>
