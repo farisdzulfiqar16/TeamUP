@@ -2,8 +2,10 @@ import { useEffect, useState } from "react";
 import PageLayout from "../components/PageLayout";
 import SkeletonCard from "../components/SkeletonCard";
 import TeamCard from "../components/TeamCard";
+import Toast from "../components/ui/Toast";
 import { dummyTeams } from "../data/dummyTeams";
 import { addStoredTeam, isTeamJoined } from "../utils/team";
+import { useToast } from "../hooks/useToast";
 
 function CariTim() {
   const [loading, setLoading] = useState(true);
@@ -11,7 +13,7 @@ function CariTim() {
 
   const [showFilter, setShowFilter] = useState(false);
   const [showMorePopup, setShowMorePopup] = useState(false);
-  const [toast, setToast] = useState(null);
+  const { toasts, showToast } = useToast();
 
   const [filters, setFilters] = useState({
     category: [],
@@ -29,15 +31,10 @@ function CariTim() {
     return () => clearTimeout(timer);
   }, []);
 
-  const showToast = (message) => {
-    setToast(message);
-    setTimeout(() => setToast(null), 2400);
-  };
-
   // JOIN TEAM
   const handleJoin = (team) => {
     if (isTeamJoined(team.id)) {
-      showToast("Kamu sudah join tim ini");
+      showToast("Kamu sudah join tim ini", "error");
       return;
     }
 
@@ -264,12 +261,8 @@ function CariTim() {
         </div>
       )}
 
-      {/* POPUP TOAST */}
-      {toast && (
-        <div className="fixed bottom-6 right-6 z-50 rounded-2xl bg-slate-900 px-4 py-3 text-sm text-white shadow-xl">
-          {toast}
-        </div>
-      )}
+      {/* TOAST */}
+      <Toast toasts={toasts} onClose={() => {}} />
 
       {/* ACTIVE FILTER TAG */}
       {activeFilters.length > 0 && (
@@ -292,10 +285,10 @@ function CariTim() {
       )}
 
       {/* LIST */}
-      <div className="flex flex-wrap gap-4">
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
         {loading
-          ? [1, 2, 3].map((i) => (
-              <SkeletonCard key={i} className="h-34 w-70" />
+          ? [1, 2, 3, 4, 5, 6].map((i) => (
+              <SkeletonCard key={i} className="h-80 w-full" />
             ))
           : filteredTeams.map((team) => {
               const joined = isTeamJoined(team.id);

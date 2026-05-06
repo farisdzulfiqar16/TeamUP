@@ -1,4 +1,4 @@
-import { useState, useEffect, useRef } from "react";
+import { useState, useEffect } from "react";
 import Header from "../components/Header";
 import StatsCard from "../components/StatsCard";
 import TeamCard from "../components/TeamCard";
@@ -12,33 +12,6 @@ export default function Dashboard() {
   const navigate = useNavigate();
   const [loading, setLoading] = useState(true);
   const [teams, setTeams] = useState(getStoredTeams());
-
-  const scrollRef = useRef(null);
-
-  // 👉 drag scroll (desktop support)
-  const handleMouseDown = (e) => {
-    const el = scrollRef.current;
-    el.isDown = true;
-    el.startX = e.pageX - el.offsetLeft;
-    el.scrollLeftStart = el.scrollLeft;
-  };
-
-  const handleMouseLeave = () => {
-    scrollRef.current.isDown = false;
-  };
-
-  const handleMouseUp = () => {
-    scrollRef.current.isDown = false;
-  };
-
-  const handleMouseMove = (e) => {
-    const el = scrollRef.current;
-    if (!el.isDown) return;
-    e.preventDefault();
-    const x = e.pageX - el.offsetLeft;
-    const walk = (x - el.startX) * 1.5;
-    el.scrollLeft = el.scrollLeftStart - walk;
-  };
 
   useEffect(() => {
     const unsubscribe = subscribeTeamsChange(setTeams);
@@ -89,12 +62,10 @@ export default function Dashboard() {
           </p>
         )}
 
-        <div
-          className="flex gap-4 overflow-x-auto pb-3 cursor-grab active:cursor-grabbing scrollbar-hide"
-        >
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
           {loading
             ? [1, 2, 3].map((i) => (
-                <SkeletonCard key={i} className="h-[136px] w-[280px]" />
+                <SkeletonCard key={i} className="h-80 w-full" />
               ))
             : teams.map((team) => (
                 <TeamCard
@@ -112,34 +83,14 @@ export default function Dashboard() {
           Rekomendasi Tim
         </h2>
 
-        <p className="text-xs text-gray-400 mb-2">
-          Geser untuk melihat →
-        </p>
-
-        <div
-          ref={scrollRef}
-          onMouseDown={handleMouseDown}
-          onMouseLeave={handleMouseLeave}
-          onMouseUp={handleMouseUp}
-          onMouseMove={handleMouseMove}
-          className="overflow-x-auto pb-4 cursor-grab active:cursor-grabbing scrollbar-hide"
-        >
-          <div
-            className="grid gap-4"
-            style={{
-              gridAutoFlow: "column",
-              gridTemplateRows: "repeat(2, 1fr)",
-              gridAutoColumns: "280px",
-            }}
-          >
-            {loading
-              ? [1, 2, 3, 4].map((i) => (
-                  <SkeletonCard key={i} className="h-[136px]" />
-                ))
-              : dummyTeams.map((team) => (
-                  <TeamCard key={team.id} {...team} />
-                ))}
-          </div>
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+          {loading
+            ? [1, 2, 3, 4].map((i) => (
+                <SkeletonCard key={i} className="h-80 w-full" />
+              ))
+            : dummyTeams.map((team) => (
+                <TeamCard key={team.id} {...team} />
+              ))}
         </div>
       </div>
     </div>

@@ -2,14 +2,16 @@ import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import PageLayout from "../components/PageLayout";
 import StepIndicator from "../components/StepIndicator";
+import Toast from "../components/ui/Toast";
 import ClickSpark from "../components/ui/ClickSpark";
 import { addStoredTeam } from "../utils/team";
+import { useToast } from "../hooks/useToast";
 import { dummyTeams } from "../data/dummyTeams";
 
 function CreateTeam() {
   const [step, setStep] = useState(1);
   const navigate = useNavigate();
-  const [error, setError] = useState("");
+  const { toasts, showToast } = useToast();
 
   const [form, setForm] = useState({
     name: "",
@@ -314,7 +316,6 @@ function CreateTeam() {
           )}
 
           <div className="mt-8 flex flex-col gap-3 sm:flex-row sm:justify-between sm:items-center">
-            {error && <p className="text-sm font-medium text-red-600">{error}</p>}
             <button
               onClick={() => navigate(-1)}
               type="button"
@@ -325,23 +326,21 @@ function CreateTeam() {
             <ClickSpark sparkColor="#3b82f6" sparkSize={10} sparkRadius={14} sparkCount={6} duration={400}>
               <button
                 onClick={() => {
-                  setError("");
-
                   if (step === 1) {
                     if (!form.name || !form.name.trim()) {
-                      setError("Nama tim harus diisi");
+                      showToast("Nama tim harus diisi", "error");
                       return;
                     }
                     if (!form.category) {
-                      setError("Kategori harus dipilih");
+                      showToast("Kategori harus dipilih", "error");
                       return;
                     }
                     if (!form.durationValue || !form.durationUnit) {
-                      setError("Durasi harus diisi lengkap");
+                      showToast("Durasi harus diisi lengkap", "error");
                       return;
                     }
                     if (parseInt(form.durationValue) <= 0) {
-                      setError("Durasi harus lebih dari 0");
+                      showToast("Durasi harus lebih dari 0", "error");
                       return;
                     }
                   }
@@ -380,6 +379,10 @@ function CreateTeam() {
           </ul>
         </aside>
       </div>
+
+      {/* TOAST */}
+      {toast && <Toast message={toast.message} type={toast.type} onClose={() => {}} />}
+
     </PageLayout>
   );
 }

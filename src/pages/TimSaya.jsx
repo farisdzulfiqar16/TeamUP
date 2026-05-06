@@ -2,9 +2,10 @@ import { useEffect, useState } from "react";
 import PageLayout from "../components/PageLayout";
 import EmptyState from "../components/EmptyState";
 import TeamCard from "../components/TeamCard";
-import ClickSpark from "../components/ui/ClickSpark";
+import Toast from "../components/ui/Toast";
 import { useNavigate } from "react-router-dom";
 import SkeletonCard from "../components/SkeletonCard";
+import { useToast } from "../hooks/useToast";
 import {
   getStoredTeams,
   subscribeTeamsChange,
@@ -14,12 +15,12 @@ import {
 function TimSaya() {
   const navigate = useNavigate();
   const [loading, setLoading] = useState(true);
-  const [teams, setTeams] = useState([]);
+  const [teams, setTeams] = useState(getStoredTeams());
   const [showConfirmModal, setShowConfirmModal] = useState(false);
   const [teamToLeave, setTeamToLeave] = useState(null);
+  const { toasts, showToast } = useToast();
 
   useEffect(() => {
-    setTeams(getStoredTeams());
     const unsubscribeTeams = subscribeTeamsChange(setTeams);
 
     const timer = setTimeout(() => setLoading(false), 900);
@@ -37,6 +38,7 @@ function TimSaya() {
   const confirmLeave = () => {
     if (teamToLeave) {
       removeStoredTeam(teamToLeave.id);
+      showToast(`Berhasil keluar dari ${teamToLeave.teamName}`, "success");
 
       // Update global teams isJoined
       const storedAllTeams = sessionStorage.getItem("allTeams");
@@ -62,25 +64,22 @@ function TimSaya() {
       <PageLayout
         title="Tim Saya"
         action={
-          <ClickSpark sparkColor="#3b82f6" sparkSize={10} sparkRadius={14} sparkCount={6} duration={400}>
-            <button
-              onClick={() => navigate("/create-team")}
-              className="rounded bg-blue-600 px-3 py-1 text-sm text-white transition-colors hover:bg-blue-500"
-              type="button"
-            >
-              + Buat Tim
-            </button>
-          </ClickSpark>
+          <button
+            onClick={() => navigate("/create-team")}
+            className="rounded bg-blue-600 px-3 py-1 text-sm text-white transition-colors hover:bg-blue-700"
+          >
+            + Buat Tim
+          </button>
         }
       >
         {loading ? (
-          <div className="flex flex-wrap gap-4">
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
             {[1, 2, 3].map((item) => (
-              <SkeletonCard key={item} className="h-34 w-70" />
+              <SkeletonCard key={item} className="h-80 w-full" />
             ))}
           </div>
         ) : teams.length > 0 ? (
-          <div className="flex flex-wrap gap-4">
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
             {teams.map((team) => (
               <TeamCard
                 key={team.id}
@@ -138,6 +137,9 @@ function TimSaya() {
           </div>
         </div>
       )}
+
+      {/* TOAST */}
+      <Toast toasts={toasts} onClose={() => {}} />
     </>
   );
 }
